@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View, ListView, ActivityIndicator } from 'react-native';
 import * as firebase from 'firebase';
 import _ from 'lodash';
 
@@ -35,24 +35,33 @@ export class Activity extends React.Component {
 export class ActivitiesScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      activities: [],
+      loading: true,
+      dataSource: this.ds.cloneWithRows([]),
     };
   }
 
   componentWillMount() {
     firebase.database().ref('activities').once('value', (snapshot) => {
+      const activities = _.map(snapshot.toJSON(), (v, k) => _.assign({key: k, id: k}, v));
       this.setState({
-        activities: _.map(snapshot.toJSON(), (v, k) => _.assign({key: k, id: k}, v)),
+        dataSource: this.ds.cloneWithRows(activities),
+        loading: false,
       });
     });
   }
 
   render() {
-    const activities = _.map(this.state.activities, (a) => <Activity {...a} />);
     return (
       <View style={styles.container}>
-        {activities}
+        { this.state.loading ?
+          <ActivityIndicator /> :
+          <ListView
+            enableEmptySections={true}
+            dataSource={this.state.dataSource}
+            renderRow={(a) => <Activity {...a} />}/>
+        }
       </View>
     );
   }
@@ -61,7 +70,8 @@ export class ActivitiesScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   },
 });

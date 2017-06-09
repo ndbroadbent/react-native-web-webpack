@@ -14,8 +14,15 @@ export class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <TextInput defaultValue={this.state.email} placeholder='me@email.com' onChangeText={email => this.setState({email})} />
-        <TextInput defaultValue={this.state.password} placeholder='password' secureTextEntry={true} onChangeText={password => this.setState({password})} />
+        <TextInput
+          defaultValue={this.state.email}
+          placeholder='me@email.com'
+          onChangeText={email => this.setState({email})} />
+        <TextInput
+          defaultValue={this.state.password}
+          placeholder='password'
+          secureTextEntry={true}
+          onChangeText={password => this.setState({password})} />
         <Button title='Login' onPress={() => this.doLogin()} />
       </View>
     );
@@ -32,7 +39,8 @@ export class LoginScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   },
 });
