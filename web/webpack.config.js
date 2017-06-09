@@ -92,7 +92,7 @@ module.exports = {
   output: {
     path: outputPath,
     filename: 'javascript/[name]-[hash:16].js',
-    publicPath: '/'
+    publicPath: ''
   },
   plugins: plugins,
   resolve: {
