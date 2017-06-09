@@ -28,7 +28,7 @@ const addAssetHtmlFiles = Object.keys(vendorConfig.entry).map((name) => {
     filepath: require.resolve(paths[0]),
     includeSourcemap: false,
     outputPath: 'javascript/vendor',
-    publicPath: '/javascript/vendor',
+    publicPath: 'javascript/vendor',
   }
 })
 
