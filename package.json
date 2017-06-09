@@ -11,7 +11,8 @@
 		"web:build:vendor": "rm -rf web/vendor; NODE_ENV=production webpack --config web/vendor.webpack.config.js",
 		"web:build:app": "rm -rf web/build; NODE_ENV=production webpack --config web/webpack.config.js",
 		"web:build": "npm run web:build:vendor && npm run web:build:app",
-		"web:serve": "http-serve -p 3001 --gzip true ./web/build"
+		"web:serve": "http-serve -p 3001 --gzip true ./web/build",
+		"publish": "npm run web:build; git checkout gh-pages; cp -R web/build/* .; git add -A; git commit -m 'publish'; git push origin gh-pages; git checkout master"
 	},
 	"dependencies": {
 		"firebase": "^4.1.2",
