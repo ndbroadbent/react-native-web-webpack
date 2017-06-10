@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View, ListView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ListView, ActivityIndicator, TouchableHighlight } from 'react-native';
 import * as firebase from 'firebase';
 import _ from 'lodash';
 
@@ -13,9 +13,13 @@ export class Activity extends React.Component {
 
   render() {
     return (
-      <View>
-        <Text>[{this.state.count}] {this.props.name}</Text>
-        <Button title='+' onPress={() => this.addEvent()} />
+      <View style={styles.activityView}>
+        <Text style={styles.activityName}>[{this.state.count}] {this.props.name}</Text>
+        <TouchableHighlight onPress={() => this.addEvent()}>
+          <View style={styles.buttonView}>
+            <Text style={styles.buttonText}>+</Text>
+          </View>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -44,7 +48,7 @@ export class ActivitiesScreen extends React.Component {
 
   componentWillMount() {
     firebase.database().ref('activities').once('value', (snapshot) => {
-      const activities = _.map(snapshot.toJSON(), (v, k) => _.assign({key: k, id: k}, v));
+      const activities = _.map(snapshot.toJSON(), (v, k) => _.assign({ key: k, id: k }, v));
       this.setState({
         dataSource: this.ds.cloneWithRows(activities),
         loading: false,
@@ -73,5 +77,35 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
+  },
+  activityView: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: 5,
+    padding: 10,
+    borderColor: '#999999',
+    borderStyle: 'solid',
+    borderWidth: 1,
+  },
+  activityName: {
+    color: '#333333',
+    fontSize: 24,
+  },
+  buttonView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgb(33, 150, 243)',
+    borderRadius: 2,
+    padding: 5,
+    width: 34,
+    height: 34
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    height: 24
   },
 });

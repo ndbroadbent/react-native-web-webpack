@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import { Button, StyleSheet, TextInput, View, Text } from 'react-native';
 import * as firebase from 'firebase';
 
 export class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      error: null,
       email: 'igor@borges.me',
       password: '123456',
     };
@@ -24,6 +25,7 @@ export class LoginScreen extends React.Component {
           secureTextEntry={true}
           onChangeText={password => this.setState({password})} />
         <Button title='Login' onPress={() => this.doLogin()} />
+        <Text style={styles.errorText}>{this.state.error && this.state.error.message}</Text>
       </View>
     );
   }
@@ -31,7 +33,10 @@ export class LoginScreen extends React.Component {
   doLogin() {
     const {email, password} = this.state;
     if (email && password) {
-      firebase.auth().signInWithEmailAndPassword(email, password);
+      this.setState({ error: null });
+      firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
+        this.setState({ error });
+      });
     }
   }
 }
@@ -43,4 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'stretch',
   },
+  errorText: {
+    color: 'red',
+  }
 });
