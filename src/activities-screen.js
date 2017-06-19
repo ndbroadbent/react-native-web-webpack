@@ -5,6 +5,7 @@ import * as joda from 'js-joda';
 import _ from 'lodash';
 import { Link } from './compat/routing';
 import { Chart } from './compat/charts';
+import { GroupListItem } from './groups-screen';
 
 export class ActivityListItem extends React.Component {
   constructor(props) {
@@ -30,18 +31,18 @@ export class ActivityListItem extends React.Component {
   }
 
   componentWillMount() {
-    firebase.database().ref(`events/${this.props.id}`).on('value', (snapshot) => {
+    firebase.database().ref(`/events/${this.props.id}`).on('value', (snapshot) => {
       this.setState({ count: snapshot.numChildren() });
     });
   }
 
   componentWillUnmount() {
-    firebase.database().ref(`events/${this.props.id}`).off('value');
+    firebase.database().ref(`/events/${this.props.id}`).off('value');
   }
 
   addEvent() {
     const date = new Date().getTime();
-    firebase.database().ref(`events/${this.props.id}/${date}`).set(1);
+    firebase.database().ref(`/events/${this.props.id}/${date}`).set(1);
   }
 }
 
@@ -104,17 +105,25 @@ export class ActivitiesScreen extends React.Component {
     super(props);
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      loading: true,
-      dataSource: this.ds.cloneWithRows([]),
+      loading: 0,
+      activities: this.ds.cloneWithRows([]),
+      groups: this.ds.cloneWithRows([]),
     };
   }
 
   componentWillMount() {
-    firebase.database().ref('activities').once('value', (snapshot) => {
+    firebase.database().ref('/activities').once('value', (snapshot) => {
       const activities = _.map(snapshot.toJSON(), (v, k) => _.assign({ key: k, id: k }, v));
       this.setState({
-        dataSource: this.ds.cloneWithRows(activities),
-        loading: false,
+        activities: this.ds.cloneWithRows(activities),
+        loading: this.state.loading + 1,
+      });
+    });
+    firebase.database().ref('/groups').once('value', (snapshot) => {
+      const groups = _.map(snapshot.toJSON(), (v, k) => _.assign({ key: k, id: k }, v));
+      this.setState({
+        groups: this.ds.cloneWithRows(groups),
+        loading: this.state.loading + 1,
       });
     });
   }
@@ -122,15 +131,18 @@ export class ActivitiesScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Link to='/group/-KmyVXZb-XGjS4Nweiuc'>
-          <Text>GROUP</Text>
-        </Link>
-        { this.state.loading ?
+        { (this.state.loading < 2) ?
           <ActivityIndicator /> :
-          <ListView
-            enableEmptySections={true}
-            dataSource={this.state.dataSource}
-            renderRow={(a) => <ActivityListItem {...a} />}/>
+          <View>
+            <ListView
+              enableEmptySections={true}
+              dataSource={this.state.groups}
+              renderRow={(a) => <GroupListItem {...a} />}/>
+            <ListView
+              enableEmptySections={true}
+              dataSource={this.state.activities}
+              renderRow={(a) => <ActivityListItem {...a} />}/>
+          </View>
         }
       </View>
     );
