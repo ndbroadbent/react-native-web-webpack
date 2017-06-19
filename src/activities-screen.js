@@ -1,9 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, ListView, ActivityIndicator, TouchableHighlight } from 'react-native';
 import * as firebase from 'firebase';
+import * as joda from 'js-joda';
 import _ from 'lodash';
+import { Link } from './compat/routing';
 
-export class Activity extends React.Component {
+export class ActivityListItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +16,9 @@ export class Activity extends React.Component {
   render() {
     return (
       <View style={styles.activityView}>
-        <Text style={styles.activityName}>[{this.state.count}] {this.props.name}</Text>
+        <Link style={{  }} to={'/activity/' + this.props.id}>
+          <Text style={styles.activityName}>[{this.state.count}] {this.props.name}</Text>
+        </Link>
         <TouchableHighlight onPress={() => this.addEvent()}>
           <View style={styles.buttonView}>
             <Text style={styles.buttonText}>+</Text>
@@ -30,9 +34,53 @@ export class Activity extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    firebase.database().ref(`events/${this.props.id}`).off('value');
+  }
+
   addEvent() {
     const date = new Date().getTime();
     firebase.database().ref(`events/${this.props.id}/${date}`).set(1);
+  }
+}
+
+export class SingleActivityScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activity: null,
+      events: [],
+    };
+  }
+
+  componentWillMount() {
+    const id = this.props.params.id;
+    firebase.database().ref('/activities/' + id).once('value', (snapshot) => {
+      this.setState({
+        activity: snapshot.val(),
+      });
+    });
+    firebase.database().ref('/events/' + id).on('value', (snapshot) => {
+      const events = _.map(_.keys(snapshot.toJSON()), (v) => joda.LocalDateTime._ofEpochMillis(v, joda.ZoneOffset.UTC));
+      this.setState({ events });
+    });
+  }
+
+  componentWillUnmount() {
+    const id = this.props.params.id;
+    firebase.database().ref('/events/' + id).off('value');
+  }
+
+  render() {
+    const events = _.map(this.state.events, (e) => <Text key={e.toString()}>{e.toString()}</Text>);
+    return (
+      <View style={{ flex: 1 }}>
+        {events}
+        <Link style={{  }} to='/'>
+          <Text>Back</Text>
+        </Link>
+      </View>
+    );
   }
 }
 
@@ -64,7 +112,7 @@ export class ActivitiesScreen extends React.Component {
           <ListView
             enableEmptySections={true}
             dataSource={this.state.dataSource}
-            renderRow={(a) => <Activity {...a} />}/>
+            renderRow={(a) => <ActivityListItem {...a} />}/>
         }
       </View>
     );

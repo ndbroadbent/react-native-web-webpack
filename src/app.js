@@ -1,9 +1,11 @@
 import React from 'react';
-import { AsyncStorage, Platform, StyleSheet, View } from 'react-native';
+import { AsyncStorage, Platform, StyleSheet, View, Text } from 'react-native';
 import * as firebase from 'firebase';
 import { LoginScreen } from './login-screen';
 import { MainScreen } from './main-screen';
+import { SingleActivityScreen } from './activities-screen';
 import _ from 'lodash';
+import { Router, Route } from './compat/routing';
 
 const initializeOnce = _.once(() => {
   const config = {
@@ -48,7 +50,20 @@ const initializeOnce = _.once(() => {
 });
 initializeOnce();
 
-export default class ExampleApp extends React.Component {
+export default class App extends React.Component {
+  render() {
+    return (
+      <Router>
+        <View>
+          <Route path='/' component={ ExampleApp } />
+          <Route path='/activity/:id' component={ SingleActivityScreen } />
+        </View>
+      </Router>
+    );
+  }
+}
+
+export class ExampleApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

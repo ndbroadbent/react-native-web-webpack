@@ -18,9 +18,11 @@
 		"firebase": "^4.1.2",
 		"js-joda": "^1.5.2",
 		"lodash": "^4.17.4",
+		"prop-types": "^15.5.10",
 		"react": "15.4.1",
 		"react-native": "0.42.3",
-		"react-native-web": "0.0.98"
+		"react-native-web": "0.0.98",
+		"route-parser": "0.0.5"
 	},
 	"devDependencies": {
 		"add-asset-html-webpack-plugin": "^2.0.1",
@@ -29,6 +31,7 @@
 		"babel-preset-react-native": "1.9.1",
 		"compression-webpack-plugin": "^0.4.0",
 		"copy-webpack-plugin": "^4.0.1",
+		"empty-module": "0.0.2",
 		"html-webpack-plugin": "^2.28.0",
 		"http-serve": "^1.0.1",
 		"jest": "19.0.2",
