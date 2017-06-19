@@ -74,12 +74,22 @@ export class SingleActivityScreen extends React.Component {
 
   render() {
     const events = _.map(this.state.events, (e) => <Text key={e.toString()}>{e.toString()}</Text>);
+    const eventsData = _(this.state.events)
+      .map((e) => {
+        return e.toLocalDate().toString();
+      })
+      .countBy()
+      .map((v, k) => {
+        return { day: k, count: v };
+      })
+      .value();
+
     return (
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 30 }}>
           { this.state.activity && this.state.activity.name }
         </Text>
-        <Chart events={this.state.events} />
+        <Chart data={eventsData} />
         { events }
         <Link to='/'>
           <Text>Back</Text>
@@ -112,6 +122,9 @@ export class ActivitiesScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <Link to='/group/-KmyVXZb-XGjS4Nweiuc'>
+          <Text>GROUP</Text>
+        </Link>
         { this.state.loading ?
           <ActivityIndicator /> :
           <ListView

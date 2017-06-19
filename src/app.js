@@ -4,8 +4,9 @@ import * as firebase from 'firebase';
 import { LoginScreen } from './login-screen';
 import { MainScreen } from './main-screen';
 import { SingleActivityScreen } from './activities-screen';
+import { SingleGroupScreen } from './groups-screen';
 import _ from 'lodash';
-import { Router, Route } from './compat/routing';
+import { Router, Route, Link } from './compat/routing';
 
 const initializeOnce = _.once(() => {
   const config = {
@@ -57,6 +58,7 @@ export default class App extends React.Component {
         <View>
           <Route path='/' component={ ExampleApp } />
           <Route path='/activity/:id' component={ SingleActivityScreen } />
+          <Route path='/group/:id' component={ SingleGroupScreen } />
         </View>
       </Router>
     );
