@@ -22,6 +22,7 @@
 		"react": "15.4.1",
 		"react-native": "0.42.3",
 		"react-native-web": "0.0.98",
+		"recharts": "^1.0.0-alpha.1",
 		"route-parser": "0.0.5"
 	},
 	"devDependencies": {

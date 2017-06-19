@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 import * as joda from 'js-joda';
 import _ from 'lodash';
 import { Link } from './compat/routing';
+import { Chart } from './compat/charts';
 
 export class ActivityListItem extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export class ActivityListItem extends React.Component {
   render() {
     return (
       <View style={styles.activityView}>
-        <Link style={{  }} to={'/activity/' + this.props.id}>
+        <Link to={'/activity/' + this.props.id}>
           <Text style={styles.activityName}>[{this.state.count}] {this.props.name}</Text>
         </Link>
         <TouchableHighlight onPress={() => this.addEvent()}>
@@ -61,7 +62,7 @@ export class SingleActivityScreen extends React.Component {
       });
     });
     firebase.database().ref('/events/' + id).on('value', (snapshot) => {
-      const events = _.map(_.keys(snapshot.toJSON()), (v) => joda.LocalDateTime._ofEpochMillis(v, joda.ZoneOffset.UTC));
+      const events = _.map(_.keys(snapshot.toJSON()), (v) => joda.LocalDateTime._ofEpochMillis(v, joda.ZoneOffset.ofHours(-3)));
       this.setState({ events });
     });
   }
@@ -75,8 +76,12 @@ export class SingleActivityScreen extends React.Component {
     const events = _.map(this.state.events, (e) => <Text key={e.toString()}>{e.toString()}</Text>);
     return (
       <View style={{ flex: 1 }}>
-        {events}
-        <Link style={{  }} to='/'>
+        <Text style={{ fontSize: 30 }}>
+          { this.state.activity && this.state.activity.name }
+        </Text>
+        <Chart events={this.state.events} />
+        { events }
+        <Link to='/'>
           <Text>Back</Text>
         </Link>
       </View>

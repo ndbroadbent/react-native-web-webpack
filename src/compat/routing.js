@@ -53,9 +53,7 @@ export class Route extends React.Component {
     console.debug(this.props.path, this.context.Router.href, params);
     const rendered = <this.props.component params={params} />;
     return (
-      <View>
-        { params && rendered }
-      </View>
+      params && <View>{ rendered }</View>
     );
   }
 }

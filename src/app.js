@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, Platform, StyleSheet, View, Text } from 'react-native';
+import { AsyncStorage, Platform, StyleSheet, View } from 'react-native';
 import * as firebase from 'firebase';
 import { LoginScreen } from './login-screen';
 import { MainScreen } from './main-screen';
