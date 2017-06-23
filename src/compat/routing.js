@@ -1,12 +1,34 @@
 import React from 'react';
-import { View, TouchableHighlight } from 'react-native';
+import { View, TouchableHighlight, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import Parser from 'route-parser';
 
 export class Router extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { href: '/' };
+    this.state = { href: '#/' };
+  }
+  
+  componentWillMount() {
+    if (Platform.os === 'web') {
+      window.onhashchange = function() {
+        console.log('onHashChange', window.location.hash);
+        
+        if (window.location.hash !== '') {
+          this.setState({ href: window.location.hash });
+        }
+      }
+      
+      if (window.location.hash !== '') {
+        window.history.pushState(undefined, undefined, window.location.hash);
+      }
+    }
+  }
+  
+  componentWillUnmount() {
+    if (Platform.os === 'web') {
+      window.onhashchange = undefined;
+    }
   }
 
   getChildContext() {
@@ -19,7 +41,10 @@ export class Router extends React.Component {
   }
 
   go(href) {
-    this.setState({ href: href });
+    if (Platform.os === 'web') {
+      window.history.pushState(undefined, undefined, '#' + href);
+    }
+    this.setState({ href: '#' + href });
   }
 
   render() {
