@@ -1,15 +1,15 @@
 // @flow
 /* eslint-disable import/no-extraneous-dependencies, global-require, import/no-dynamic-require  */
 /* eslint-disable no-underscore-dangle  */
-const __DEV__ = process.env.NODE_ENV === 'development'
+const __DEV__ = process.env.NODE_ENV === 'development';
 
-const path = require('path')
-const webpack = require('webpack')
-const config = require('./shared.webpack.config.js')
+const path = require('path');
+const webpack = require('webpack');
+const config = require('./shared.webpack.config.js');
 
 // We need a separate build for dev, which is unminified and includes PropTypes.
-const outputPath = path.join(__dirname, __DEV__ ? 'vendor-dev' : 'vendor')
-const outputFilename = __DEV__ ? '[name].dll.js' : '[name]-[hash:16].dll.js'
+const outputPath = path.join(__dirname, __DEV__ ? 'vendor-dev' : 'vendor');
+const outputFilename = __DEV__ ? '[name].dll.js' : '[name]-[hash:16].dll.js';
 
 const plugins = [
   new webpack.DefinePlugin({
@@ -23,7 +23,7 @@ const plugins = [
     name: '[name]',
     path: path.join(outputPath, '[name]-manifest.json'),
   }),
-]
+];
 
 module.exports = {
   entry: {
@@ -53,4 +53,4 @@ module.exports = {
     },
     extensions: ['.web.js', '.js', '.json'],
   },
-}
+};
