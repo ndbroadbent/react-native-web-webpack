@@ -2,31 +2,34 @@ import React from 'react';
 import { View, TouchableHighlight, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import Parser from 'route-parser';
+import _ from 'lodash';
 
 export class Router extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { href: '#/' };
+    this.state = {
+      href: '#/',
+      history: ['#/'],
+    };
   }
   
   componentWillMount() {
-    if (Platform.os === 'web') {
-      window.onhashchange = function() {
-        console.log('onHashChange', window.location.hash);
+    if (Platform.OS === 'web') {
+      const onHashChange = function() {
+        console.debug('onHashChange', window.location.hash);
         
         if (window.location.hash !== '') {
           this.setState({ href: window.location.hash });
         }
-      }
+      };
+      window.onhashchange = _.bind(onHashChange, this);
       
-      if (window.location.hash !== '') {
-        window.history.pushState(undefined, undefined, window.location.hash);
-      }
+      this.go(window.location.hash === '' ? '/' : window.location.hash.slice(1));
     }
   }
   
   componentWillUnmount() {
-    if (Platform.os === 'web') {
+    if (Platform.OS === 'web') {
       window.onhashchange = undefined;
     }
   }
@@ -35,16 +38,38 @@ export class Router extends React.Component {
     return {
       Router: {
         href: this.state.href,
-        go: this.go.bind(this)
+        go: this.go.bind(this),
+        back: this.back.bind(this),
       }
     };
   }
 
   go(href) {
-    if (Platform.os === 'web') {
+    console.debug('go', href);
+    if (Platform.OS === 'web') {
       window.history.pushState(undefined, undefined, '#' + href);
     }
-    this.setState({ href: '#' + href });
+    this.setState({
+      href: '#' + href,
+      history: _.concat(this.state.history, '#' + href),
+    });
+  }
+
+  back() {
+    console.debug('back');
+    const newHistory = _.dropRight(this.state.history, 1);
+    const newHref = _.last(newHistory);
+
+    if (newHref) {
+      if (Platform.OS === 'web') {
+        window.location.hash = newHref;
+      }
+
+      this.setState({
+        href: newHref,
+        history: newHistory,
+      });
+    }
   }
 
   render() {
@@ -74,9 +99,10 @@ export class Route extends React.Component {
   }
 
   render() {
-    const params = this.parser.match(this.context.Router.href);
-    console.debug(this.props.path, this.context.Router.href, params);
+    const href = this.context.Router.href.slice(1);
+    const params = this.parser.match(href);
     const rendered = <this.props.component params={params} />;
+
     return (
       params && <View>{ rendered }</View>
     );
@@ -98,3 +124,17 @@ export class Link extends React.Component {
 }
 
 Link.contextTypes = Router.childContextTypes;
+
+export class Back extends React.Component {
+  render() {
+    return (
+      <TouchableHighlight onPress={() => this.context.Router.back()}>
+        <View>
+          { this.props.children }
+        </View>
+      </TouchableHighlight>
+    );
+  }
+}
+
+Back.contextTypes = Router.childContextTypes;

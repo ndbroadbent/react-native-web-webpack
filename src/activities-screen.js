@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ListView, ActivityIndicator, TouchableHighlight
 import * as firebase from 'firebase';
 import * as joda from 'js-joda';
 import _ from 'lodash';
-import { Link } from './compat/routing';
+import { Link, Back } from './compat/routing';
 import { Chart } from './compat/charts';
 import { GroupListItem } from './groups-screen';
 
@@ -92,9 +92,9 @@ export class SingleActivityScreen extends React.Component {
         </Text>
         <Chart data={eventsData} />
         { events }
-        <Link to='/'>
+        <Back>
           <Text>Back</Text>
-        </Link>
+        </Back>
       </View>
     );
   }

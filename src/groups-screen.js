@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, ListView, ActivityIndicator, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import * as firebase from 'firebase';
 import * as joda from 'js-joda';
 import _ from 'lodash';
-import { Link } from './compat/routing';
+import { Link, Back } from './compat/routing';
 import { Chart } from './compat/charts';
 
 export class GroupListItem extends React.Component {
@@ -143,9 +143,9 @@ export class SingleGroupScreen extends React.Component {
           { this.state.group && this.state.group.name }
         </Text>
         <Chart data={eventsData} lines={lines} />
-        <Link to='/'>
+        <Back>
           <Text>Back</Text>
-        </Link>
+        </Back>
       </View>
     );
   }
