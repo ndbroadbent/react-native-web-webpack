@@ -22,7 +22,7 @@ export default class ExampleApp extends Component {
           Welcome to React Native! ({platformText[Platform.OS]})
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.android.js
+          To get started, edit index.{Platform.OS}.js
         </Text>
         <Text style={styles.instructions}>
           Double tap R on your keyboard to reload,{'\n'}
